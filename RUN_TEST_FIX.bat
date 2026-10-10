@@ -15,7 +15,7 @@ cls
 set "PID=P03"
 set /p PID=Which fix to test? (Enter = P03): 
 echo.
-echo Same-moment test: 4 real failure moments x 3 tries x 2 versions (about $0.30-0.50)...
+echo Same-moment test: 4 failure moments x 3 tries x 2 versions (about $0.30-0.50)...
 %PY% moment_test.py --only %PID% --cases 4 --tries 3
 echo.
 echo ============================================================

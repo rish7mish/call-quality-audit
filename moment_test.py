@@ -76,7 +76,7 @@ def mock_reply(variant, i):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", default="", help="comma-separated problem ids (default: all fixes)")
-    ap.add_argument("--cases", type=int, default=4, help="real failure moments per fix")
+    ap.add_argument("--cases", type=int, default=4, help="failure moments per fix (from the sample calls)")
     ap.add_argument("--tries", type=int, default=3, help="replies per version per moment")
     args = ap.parse_args()
     if not provider():
@@ -127,7 +127,7 @@ def main():
         if not cases:
             print(f"{pid}: no usable failure moments found (evidence had no timestamps).")
             continue
-        print(f"{pid} {fix['problem_name']}: {len(cases)} real failure moments x 2 versions x {args.tries} tries ...")
+        print(f"{pid} {fix['problem_name']}: {len(cases)} failure moments x 2 versions x {args.tries} tries ...")
         t0 = time.time()
         for c in cases:
             mistake = f"{mistake_base} Specifically in this call: {c['root_cause']}"
@@ -147,7 +147,7 @@ def main():
                 c["replies"][variant] = out
             cur = sum(r["mistake"] for r in c["replies"]["current"])
             fx = sum(r["mistake"] for r in c["replies"]["fixed"])
-            flag = "" if c["real_mistake"] else "  (real reply not judged a mistake - not counted)"
+            flag = "" if c["real_mistake"] else "  (actual reply not judged a mistake - not counted)"
             print(f"   {c['key']}: today's instructions {cur}/{args.tries} mistakes, fixed {fx}/{args.tries}{flag}")
 
         valid = [c for c in cases if c["real_mistake"]]

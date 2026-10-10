@@ -3,7 +3,7 @@ STEP 6 - Prove the fix works: replay failed calls against the CURRENT and the FI
 
 For each fix in fixes/<P01>/fix.json:
   1. take up to --calls failed calls that have this problem
-  2. a SIMULATED BUYER (AI) plays the real buyer from that call - same need, same answers, same quirks
+  2. a SIMULATED BUYER (AI) plays the original buyer from that call - same need, same answers, same quirks
   3. the BOT (AI) answers turn by turn, once with the current prompt and once with the fixed prompt
   4. both simulated conversations are graded by the SAME checker as the sample calls
   5. failure rate on the problem's checks: current prompt vs fixed prompt
@@ -62,9 +62,9 @@ def sim_ask(system, user, max_tokens):
 BUYER_SYSTEM = """You are role-playing the BUYER in a phone call with IndiaMART's AI assistant. Below is the transcript of
 the ORIGINAL call this buyer had. Behave like that buyer: same requirement, same answers (quantity, unit, specs), same language
 mix (Hindi/English/Hinglish), same level of patience and the same quirks (e.g. answering in crates, giving a range,
-mentioning a different product). If the real buyer's words look garbled by speech recognition, give similarly unclear
-answers at the same moments. Do NOT help the bot more than the real buyer did.
-Reply with ONLY the buyer's next utterance (one short line). If the real buyer would hang up now (irritated, done, or the
+mentioning a different product). If the original buyer's words look garbled by speech recognition, give similarly unclear
+answers at the same moments. Do NOT help the bot more than the original buyer did.
+Reply with ONLY the buyer's next utterance (one short line). If the original buyer would hang up now (irritated, done, or the
 bot is closing the call), reply with exactly: [HANGUP]
 
 ORIGINAL CALL TRANSCRIPT:
@@ -101,15 +101,15 @@ def first_bot_line(transcript):
     return "Hello, main IndiaMART se bol rahi hoon. Aapko kis product ki requirement hai?"
 
 
-def simulate(real_transcript, bot_prompt, max_turns, mock=False):
-    opening = first_bot_line(real_transcript)
+def simulate(orig_transcript, bot_prompt, max_turns, mock=False):
+    opening = first_bot_line(orig_transcript)
     turns = [{"start": 0.0, "end": 0.0, "spk": "BOT", "text": opening}]
     convo = f"Bot: {opening}"
     for i in range(max_turns):
         if mock:
             buyer = "[HANGUP]" if i == max_turns - 1 else f"(mock buyer reply {i})"
         else:
-            buyer, _ = sim_ask(BUYER_SYSTEM + real_transcript[:6000],
+            buyer, _ = sim_ask(BUYER_SYSTEM + orig_transcript[:6000],
                                "CONVERSATION SO FAR:\n" + convo + "\n\nYour next line as the buyer:", 1500)
             lines = [x for x in buyer.strip().splitlines() if x.strip()]
             buyer = lines[0].strip() if lines else "[HANGUP]"
@@ -135,10 +135,10 @@ def failed(result, checks):
     return any(result["checks"][c]["grade"] in ("Fatal", "Non-Fatal") for c in checks if c in result["checks"])
 
 
-def run_one(key, real_transcript, prompts, checks, max_turns, grader_prompt, mock):
+def run_one(key, orig_transcript, prompts, checks, max_turns, grader_prompt, mock):
     out = {"key": key}
     for variant, bp in prompts.items():
-        turns = simulate(real_transcript, bp, max_turns, mock)
+        turns = simulate(orig_transcript, bp, max_turns, mock)
         g = grade_turns(f"{key}_{variant}", turns, grader_prompt, has_audio=False)
         out[variant] = {"failed": failed(g, checks), "overall": g["overall"],
                         "checks": {c: g["checks"][c] for c in checks if c in g["checks"]},
@@ -183,17 +183,17 @@ def main():
             print(f"{pid}: skipped - its checks (silence/voice/category) can't be measured in a text replay.")
             continue
         keys = fix["problem"]["keys"][: args.calls]
-        reals = {}
+        originals = {}
         for k in keys:
             p = os.path.join(graded_dir, f"{k}.json")
             if os.path.exists(p):
                 with open(p, encoding="utf-8") as f:
-                    reals[k] = json.load(f).get("transcript", "")
-        print(f"{pid} {fix['problem_name']}: replaying {len(reals)} calls x 2 prompts (checks: {', '.join(checks)}) ...")
+                    originals[k] = json.load(f).get("transcript", "")
+        print(f"{pid} {fix['problem_name']}: replaying {len(originals)} calls x 2 prompts (checks: {', '.join(checks)}) ...")
         t0 = time.time()
         results = []
         with ThreadPoolExecutor(max_workers=args.workers) as pool:
-            futs = [pool.submit(run_one, k, t, prompts, checks, args.turns, grader_prompt, mock) for k, t in reals.items()]
+            futs = [pool.submit(run_one, k, t, prompts, checks, args.turns, grader_prompt, mock) for k, t in originals.items()]
             for fu in futs:
                 try:
                     results.append(fu.result())
@@ -214,7 +214,7 @@ def main():
                "real_calls_failure_rate": 100.0,
                "issue_found_at": fix.get("issue_found_at", ""), "fix_suggested_at": fix.get("fix_suggested_at", ""),
                "fix_tested_at": tested_at, "test_seconds": round(time.time() - t0, 1),
-               "method": "text simulation: AI buyer replays real failed calls; same checker grades both prompts",
+               "method": "text simulation: AI buyer replays failed sample calls; same checker grades both prompts",
                "results": results}
         out = os.path.join(HERE, "tests", pid)
         os.makedirs(out, exist_ok=True)

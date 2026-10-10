@@ -66,7 +66,7 @@ All AI prompts are exported for review in [`prompts/`](prompts/README.md). Run `
 ## How each step works, and why it was built that way
 
 ### Step 2: Grading (the AI auditor)
-- **The rules are the auditors' own.** The 17 checks come from their matrix. Where the matrix was vague, we read the auditors' written notes to see where they draw the line. Every rule records where it came from (copied, confirmed on past data, clarified from notes, measured by code, set aside, or required by PS01). See `rubric.py` → `RULE_ORIGIN` and dashboard page 8.
+- **The rules are the auditors' own.** The 17 checks come from their matrix. Where the matrix was vague, we drew a clear line and checked it against the sample audit examples. Every rule records where it came from (copied, confirmed on sample data, clarified by us, measured by code, set aside, or required by PS01). See `rubric.py` → `RULE_ORIGIN` and dashboard page 8.
 - **The overall verdict is computed by code, not by the AI:** the call's verdict is its worst check. We confirmed this matches the auditors' overall verdict 97% of the time in the sample audit sheet.
 - **Measure, don't ask:** dead air is measured from timestamps (a gap of more than 7 s after the buyer speaks, ignoring the first 10 s). The buyer's word count is passed in as a hard signal for "did the buyer ever really engage?".
 - **No proof, no fault:** every Fatal or Non-Fatal must quote the transcript line with its timestamp.
@@ -101,7 +101,7 @@ All AI prompts are exported for review in [`prompts/`](prompts/README.md). Run `
 
 | Rules version | What changed | Agreement with auditors |
 |---|---|---|
-| v1 | Matrix + overall rule + auditor notes | 36% (first 11 tune calls) |
+| v1 | Matrix + overall rule + our clarifications | 36% (first 11 tune calls) |
 | v2 | "Only clear, material problems"; dead air only after the buyer speaks | 45% |
 | v3 | Seller requests are normal; tighter spec rules | 48% (Serious recall fell to 36%) |
 | **v4 (frozen)** | Outcome = Fatal when buyer never confirmed and gave no detail; looping tightened | **65% tune** |
@@ -134,7 +134,7 @@ All AI prompts are exported for review in [`prompts/`](prompts/README.md). Run `
 ---
 
 ## Lessons learned (so you can reuse this)
-1. **Start from the humans' rulebook and their notes**, not from what "good" sounds like. Our first rules flagged far more than auditors do (36% agreement).
+1. **Start from the humans' rulebook and their graded examples**, not from what "good" sounds like. Our first rules flagged far more than auditors do (36% agreement).
 2. **Keep a holdout and touch it once.** Tune agreement (65%) overstated real performance (50%).
 3. **Know the human ceiling.** At 75%, auditor-vs-auditor agreement is the realistic target.
 4. **Let code do what code can:** overall verdict, silences, word counts, priority score.

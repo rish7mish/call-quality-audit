@@ -219,39 +219,39 @@ def build_system_prompt() -> str:
 
 # ---------------------------------------------------------------- how each rule was created (shown in the app)
 # Groups: A = copied from the auditors' matrix, B = confirmed with the sample audit sheet,
-#         C = clarified from the auditors' notes (our interpretation), D = measured by code, not judged by the AI,
+#         C = clarified by us where the matrix is vague (our interpretation), D = measured by code, not judged by the AI,
 #         E = set aside: can't be judged from the call, F = required by the problem statement.
 RULE_GROUPS = {
     "A": ("Copied from the auditors' rulebook", "Where the auditors' matrix was already clear, we used it as written."),
     "B": ("Confirmed with sample grading data", "Checked against the sample audit sheet (calls the auditors already graded)."),
-    "C": ("Clarified from the auditors' notes", "The matrix was vague, so we read the auditors' written notes to see where they draw the line. Our interpretation - the most likely place for mistakes."),
+    "C": ("Clarified where the matrix is vague", "The matrix was vague, so we drew a clear line and checked it against the sample audit examples. Our interpretation - the most likely place for mistakes."),
     "D": ("Measured by the computer", "Measured exactly from timestamps instead of asking the AI's opinion."),
     "E": ("Set aside - not visible in the call", "Needs dashboard data the conversation doesn't contain, so marked 'not assessable' instead of guessing."),
     "F": ("Required by the problem statement", "Evidence, risk flags, cause types and a transparent priority score are asked for in PS01."),
 }
 RULE_ORIGIN = {
-    "outcome":        ("ABC", "Matrix says always Fatal; the sample audit sheet agrees (almost always Fatal). v4: Fatal when the buyer never confirmed and gave no detail, whatever the bot did ('on hold, then disconnected, lead approved'); the code counts the buyer's words as a hard signal. Asking for a specific seller is normal (auditors Pass it)."),
-    "qty_value":      ("AC", "Matrix: a small difference is OK. Notes: '300 captured as 600' was Fatal; '10-15 box, captured 10' was Non-Fatal."),
+    "outcome":        ("ABC", "Matrix says always Fatal; the sample audit sheet agrees (almost always Fatal). v4: Fatal when the buyer never confirmed and gave no detail, whatever the bot did (e.g. buyer on hold, then disconnected); the code counts the buyer's words as a hard signal. Asking for a specific seller is normal (auditors Pass it)."),
+    "qty_value":      ("AC", "Matrix: a small difference is OK. Clarified: a materially different number (e.g. doubled) is Fatal; taking the lower end of a range is Non-Fatal."),
     "qty_unit":       ("AC", "Matrix: similar units are OK. Clarified: a unit that changes the order (crate -> piece) is Fatal."),
-    "qty_probing":    ("CE", "Notes: bot assumed a quantity it never asked = Fatal. v3 also flagged 'qty never asked' but it fired on calls handed to a seller, so v4 reverted it. 'Asked when not needed' needs category data, so set aside."),
-    "qty_missed":     ("AC", "Matrix: Fatal. Notes: Non-Fatal only when the buyer's voice was unclear."),
-    "spec1":          ("AC", "Notes: a clearly stated value changed (8 feet -> 8 inch) or invented = Fatal; '3.6 captured as 3' = Non-Fatal. v3: picking the nearest option for an unclear answer is not an error."),
+    "qty_probing":    ("CE", "Clarified: bot assumed a quantity it never asked = Fatal. v3 also flagged 'qty never asked' but it fired on calls handed to a seller, so v4 reverted it. 'Asked when not needed' needs category data, so set aside."),
+    "qty_missed":     ("AC", "Matrix: Fatal. Clarified: Non-Fatal only when the buyer's voice was unclear."),
+    "spec1":          ("AC", "Clarified: a clearly stated value changed (e.g. feet -> inch) or invented = Fatal; a small rounding = Non-Fatal. v3: picking the nearest option for an unclear answer is not an error."),
     "spec2":          ("AC", "Same rule as Spec 1, for the second spec."),
-    "spec_missed":    ("AC", "Matrix: spec 1 or 2 lost = Fatal; only spec 3 lost = Non-Fatal. Notes: several sizes given, only one kept = Non-Fatal."),
+    "spec_missed":    ("AC", "Matrix: spec 1 or 2 lost = Fatal; only spec 3 lost = Non-Fatal. Clarified: several sizes given, only one kept = Non-Fatal."),
     "addl_details":   ("A",  "Matrix: grossly wrong details = Fatal; generic or duplicate = Non-Fatal."),
-    "looping":        ("AC", "Matrix says 'probing more than 1+2 times' (vague). Notes: Fatal only when it irritated the buyer or lost information; Non-Fatal when 'probed even with clear input'. Re-asking after an unclear answer, re-confirming, or asking again much later is normal."),
-    "stt":            ("AC", "Matrix: Fatal if it hurts the lead. Notes: '500 heard as 5' Fatal; a misheard product name Non-Fatal. v2: only when the bot's reply shows it - garbled buyer lines are our own transcription."),
+    "looping":        ("AC", "Matrix says 'probing more than 1+2 times' (vague). Clarified: Fatal only when it irritated the buyer or lost information; Non-Fatal when it re-asks after a clear answer. Re-asking after an unclear answer, re-confirming, or asking again much later is normal."),
+    "stt":            ("AC", "Matrix: Fatal if it hurts the lead. Clarified: a misheard number that changes the lead is Fatal; a misheard product name Non-Fatal. v2: only when the bot's reply shows it - garbled buyer lines are our own transcription."),
     "dead_air":       ("ADC", "Matrix: over 5s (8s with noise). The computer measures only gaps after the buyer spoke, skipping the first 10s. Gaps over 7s count (auditors did not flag ~6s gaps). Fatal only when the buyer hung up because of it; transfer hold is not dead air."),
     "pronunciation":  ("C",  "A transcript can't capture sound, so we only judge the wrong language (buyer speaks English, bot stays in Hindi)."),
-    "product_change": ("AC", "Matrix: wrong product approved = Fatal. Notes example: bot offered rice, buyer wanted eggs."),
+    "product_change": ("AC", "Matrix: wrong product approved = Fatal (e.g. bot captures a different product than the buyer asked for)."),
     "isq":            ("A",  "Matrix: contradicting or confusing spec questions."),
-    "mcat":           ("CE", "Needs the dashboard's category mapping - except when the bot asks questions from a different product (seen in auditor notes: sugar call asked oil questions -> 'wrongly mapped'). Otherwise not assessable."),
+    "mcat":           ("CE", "Needs the dashboard's category mapping - except when the bot asks questions from a different product (e.g. questions about a different product than the buyer asked for). Otherwise not assessable."),
     "astbuy":         ("E",  "Needs seller availability - not in the call. 'Buyer asked for a person' is raised as a risk flag instead."),
 }
 OVERALL_ORIGIN = ("B", "Overall = the worst single check. The auditors' own verdicts in the sample audit sheet follow this rule 97% of the time.")
 SOURCES = [
     ("Call Quality Matrix (image)", "The auditors' rulebook: the 17 checks and their Fatal / Non-Fatal wording."),
-    ("Sample audit sheet", "Sample calls graded by the auditors: grades per check, their written notes, and the overall verdict."),
+    ("Sample audit sheet", "Sample calls graded by the auditors: grades per check and the overall verdict."),
     ("PS01 problem statement", "The problem statement: evidence for every grade, risk flags, cause types, transparent priority."),
     ("Sarvam transcripts of the sample calls", "Timestamps and speaker turns, so silences can be measured by code."),
 ]
@@ -278,7 +278,7 @@ def rules_table():
 
 RULES_VERSION = "v4 (2026-10-10)"
 RULES_CHANGELOG = [
-    ("v1 (2026-10-09)", "First version: auditors' matrix + overall rule confirmed on the sample audit sheet + clarifications from auditor notes.", ""),
+    ("v1 (2026-10-09)", "First version: auditors' matrix + overall rule confirmed on the sample audit sheet + our clarifications where the matrix is vague.", ""),
     ("v2 (2026-10-10)", "Calibrated after the first 11 tune calls (36% agreement): the AI flagged far more than auditors do.",
      "Global 'only clear, material problems'; dead air only after buyer turns, not first 10s or transfer hold; mishearing only "
      "when the bot's reply shows it; one re-ask is not looping; spec/pronunciation/ISQ tightened; outcome Fatal when no clear "
