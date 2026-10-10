@@ -1,0 +1,122 @@
+MADE-UP DEMO CALLS
+These conversations are invented for demonstrations. They are not real calls.
+Paste one call (the lines under its title) into dashboard page 9 "Try it live" and press the button.
+Pasted text has no audio, so "dead air" is reported as not assessable.
+
+==================================================================
+CALL 1 - Bad call: quantity and size captured wrong, bot repeats itself
+Expected: Serious. Flags: wrong requirement, frustration, loop, asked for a human
+==================================================================
+[00:00] Bot: Namaste, main IndiaMART se Vani bol rahi hoon. Aapne LED panel light ke liye enquiry ki thi, kya abhi baat kar sakte hain?
+[00:06] Buyer: Haan ji, boliye.
+[00:08] Bot: Aapko LED panel light kitni quantity mein chahiye?
+[00:12] Buyer: Teen sau piece chahiye, 300.
+[00:15] Bot: Theek hai, 30 piece. Aapko kitne watt ki chahiye?
+[00:19] Buyer: Nahi nahi, 300 piece bola maine. Watt 18 watt.
+[00:24] Bot: Samajh gayi. Aur size kya chahiye?
+[00:27] Buyer: 2 by 2 feet, square.
+[00:31] Bot: Aur size kya chahiye aapko?
+[00:34] Buyer: Abhi to bataya, 2 by 2 feet.
+[00:37] Bot: Ji theek hai. Main confirm kar leti hoon: aapko 30 piece LED panel light chahiye, 18 watt, 2 by 2 inch. Sahi hai?
+[00:45] Buyer: Arre aap sun hi nahi rahi ho. Kisi insaan se baat karao.
+[00:49] Bot: Dhanyavaad, aapki requirement sellers ko bhej di gayi hai. Aapka din shubh ho.
+
+==================================================================
+CALL 2 - Good call
+Expected: OK
+==================================================================
+[00:00] Bot: Namaste, main IndiaMART se Vani bol rahi hoon. Aapne steel almirah ke liye enquiry ki thi, kya do minute baat kar sakte hain?
+[00:06] Buyer: Haan, boliye.
+[00:08] Bot: Aapko kitni almirah chahiye?
+[00:11] Buyer: Paanch piece.
+[00:13] Bot: Paanch piece. Single door chahiye ya double door?
+[00:18] Buyer: Double door.
+[00:20] Bot: Aur height kitni chahiye?
+[00:23] Buyer: 6 feet ke aaspaas.
+[00:26] Bot: Koi aur detail, jaise colour ya andar locker?
+[00:29] Buyer: Grey colour, andar locker hona chahiye.
+[00:33] Bot: Main confirm kar leti hoon: 5 piece steel almirah, double door, 6 feet, grey colour, andar locker ke saath. Sahi hai?
+[00:41] Buyer: Haan, sahi hai.
+[00:43] Bot: Dhanyavaad. Aapki requirement verified sellers ko bhej di gayi hai, woh aapse jaldi sampark karenge.
+
+==================================================================
+CALL 3 - Buyer never engaged, but a lead was still created
+Expected: Serious (outcome)
+==================================================================
+[00:00] Bot: Namaste, main IndiaMART se Vani bol rahi hoon. Aapne submersible pump ke liye enquiry ki thi, kya abhi baat kar sakte hain?
+[00:07] Buyer: Hello?
+[00:09] Bot: Ji, main IndiaMART se bol rahi hoon. Aapko submersible pump kitni quantity mein chahiye?
+[00:15] Buyer: Haan... ek minute.
+[00:31] Bot: Hello, kya aap mujhe sun pa rahe hain? Aapko kitne HP ka pump chahiye?
+[00:38] Buyer: Huh?
+[00:41] Bot: Koi baat nahi. Main aapki requirement sellers ko bhej deti hoon. Dhanyavaad.
+
+==================================================================
+CALL 4 - Bot invents a quantity (same pattern as the top problem, P03)
+Expected: Serious (quantity)
+==================================================================
+[00:00] Bot: Namaste, main IndiaMART se Vani bol rahi hoon. Aapne office chair ke liye enquiry ki thi. Kya abhi baat kar sakte hain?
+[00:06] Buyer: Haan boliye.
+[00:08] Bot: Aapko office chair kitni chahiye?
+[00:11] Buyer: Yes sir.
+[00:13] Bot: Theek hai, ek unit. Aapko chair mein armrest chahiye?
+[00:17] Buyer: Haan armrest wali, aur revolving honi chahiye.
+[00:22] Bot: Ji. Aapka budget kitna hai per chair?
+[00:25] Buyer: Paanch hazaar tak.
+[00:28] Bot: Main confirm karti hoon: 1 office chair, armrest ke saath, revolving, 5000 rupaye tak. Aapki requirement sellers ko bhej di gayi hai. Dhanyavaad.
+
+==================================================================
+CALL 5 - Unit changed: crate became piece
+Expected: Serious (quantity unit)
+==================================================================
+[00:00] Bot: Namaste, main IndiaMART se Vani bol rahi hoon. Aapne tamatar ke liye enquiry ki thi, kya abhi baat ho sakti hai?
+[00:06] Buyer: Haan ji.
+[00:08] Bot: Aapko kitna tamatar chahiye?
+[00:11] Buyer: Bees crate chahiye har hafte.
+[00:15] Bot: Bees piece. Aapko kaunsi variety chahiye, desi ya hybrid?
+[00:20] Buyer: Hybrid.
+[00:22] Bot: Aur delivery kahan chahiye?
+[00:25] Buyer: Indore mandi mein.
+[00:28] Bot: Theek hai, 20 piece hybrid tamatar, Indore delivery. Aapki requirement sellers tak pahuncha di gayi hai. Dhanyavaad.
+
+==================================================================
+CALL 6 - Wrong product: pipe became sheet
+Expected: Serious (product change). Flags: wrong requirement, frustration
+==================================================================
+[00:00] Bot: Namaste, main IndiaMART se Vani bol rahi hoon. Aapne PVC pipe ke liye enquiry ki thi, kya abhi baat kar sakte hain?
+[00:06] Buyer: Haan, PVC pipe chahiye, 4 inch wala.
+[00:10] Bot: Ji. Aapko kitni PVC sheet chahiye?
+[00:13] Buyer: Sheet nahi, pipe. Sau pipe chahiye.
+[00:17] Bot: Theek hai, 100 piece. Sheet ki thickness kitni chahiye, 2 mm ya 3 mm?
+[00:22] Buyer: Arre pipe bola maine, sheet nahi.
+[00:25] Bot: Samajh gayi. Main aapki PVC sheet ki requirement sellers ko bhej deti hoon. Dhanyavaad.
+
+==================================================================
+CALL 7 - Small slip: range "10-15" saved as 10
+Expected: Minor (borderline - the buyer confirmed, so the AI may say OK)
+==================================================================
+[00:00] Bot: Namaste, main IndiaMART se Vani bol rahi hoon. Aapne A4 paper ke liye enquiry ki thi, kya abhi baat kar sakte hain?
+[00:06] Buyer: Haan boliye.
+[00:08] Bot: Aapko A4 paper kitna chahiye?
+[00:11] Buyer: Das se pandrah box chahiye.
+[00:15] Bot: Das box. Kitne GSM ka paper chahiye?
+[00:19] Buyer: 75 GSM.
+[00:21] Bot: Koi brand preference?
+[00:24] Buyer: JK ho to achha hai, warna koi bhi chalega.
+[00:28] Bot: Main confirm karti hoon: 10 box A4 paper, 75 GSM, JK brand preferred. Sahi hai?
+[00:34] Buyer: Haan theek hai.
+[00:36] Bot: Dhanyavaad, aapki requirement verified sellers ko bhej di gayi hai.
+
+==================================================================
+CALL 8 - Buyer asks for a specific seller (normal, not a fault)
+Expected: OK. Flag: asked for a human
+==================================================================
+[00:00] Bot: Namaste, main IndiaMART se Vani bol rahi hoon. Aapne Sharma Steel Traders se MS angle ke liye enquiry ki thi. Woh abhi uplabdh nahi hain, main aapki madad kar sakti hoon. Kya abhi baat kar sakte hain?
+[00:10] Buyer: Mujhe Sharma ji se hi baat karni thi. Unka maal achha hota hai.
+[00:15] Bot: Ji bilkul, main aapki requirement unhe aur kuch aur verified sellers ko bhej deti hoon. Aapko MS angle kitna chahiye?
+[00:21] Buyer: Do ton.
+[00:23] Bot: Do ton. Kaunsa size chahiye?
+[00:26] Buyer: 50 by 50, 5 mm.
+[00:30] Bot: Main confirm karti hoon: 2 ton MS angle, 50 by 50, 5 mm. Sahi hai?
+[00:36] Buyer: Haan sahi hai.
+[00:38] Bot: Dhanyavaad. Sharma Steel Traders aur doosre sellers aapse jaldi sampark karenge.

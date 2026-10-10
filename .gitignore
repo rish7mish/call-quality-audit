@@ -1,0 +1,21 @@
+# Data and run outputs - never commit
+human_labels.csv
+audited_recordings/
+provided_recordings/
+transcripts/
+transcripts_provided/
+graded/
+graded_provided/
+checked_calls/
+results/
+problems/
+problems_provided/
+fixes/
+tests/
+inputs/
+*.mp3
+*.wav
+usage_log.csv
+anthropic_workspace_id.txt
+__pycache__/
+*.pyc
